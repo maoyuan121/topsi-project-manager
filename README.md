@@ -1,101 +1,99 @@
 # Topsi Project Manager
 
-Topsi Project Manager is a **simple** Kanban board software built with Electron
-and Vue.js. It supports all three major platforms (Windows, Linux and macOS).
+Topsi Project Manager 是一个使用 Electron 和 Vue.js 构建的简单的项目看板软件。支持 3 个主流的平台（Windows, Linux and macOS）。
 
-It's free and open source under the AGPLv3 license.
+该软件是开源且免费的。开源协议是 AGPLv3。
 
 ## Version 0.1
 
-## Features
+## 功能
 
-### **No** Internet required, **no** registration needed
+### 不需要网络，不需要注册。
 
 ![No Internet required, no registration needed](https://user-images.githubusercontent.com/2964165/44611105-6e920e00-a7cd-11e8-99d3-fa9d172e1fd7.png)
 
-### Simple Kanban board
+### 简单的看板
 
 ![Simple Kanban board](https://user-images.githubusercontent.com/2964165/44611113-7b166680-a7cd-11e8-8909-077bd7ec87c7.png)
 
-### Organize your notes in multiple milestones
+### 用里程碑将 notes 组织在一起
 
 ![Organize your notes in multiple milestones](https://user-images.githubusercontent.com/2964165/44611155-ad27c880-a7cd-11e8-89fa-acf0dea717cb.png)
 
-### Drag & drop notes
+### 支持拖放
 
 ![Drag & drop notes](https://user-images.githubusercontent.com/2964165/44611998-c1ba8f80-a7d2-11e8-9675-30ac9bc203e4.gif)
 
-### Tags
+### 标签
 
 ![Tags](https://user-images.githubusercontent.com/2964165/44611830-b6b32f80-a7d1-11e8-91d3-66175c503978.gif)
 
-### Search for notes by title or tag
+### 通过 note 的标题和标签进行搜索
 
 ![Search for notes by title or tag](https://user-images.githubusercontent.com/2964165/44611789-63d97800-a7d1-11e8-9410-cef3776b779b.gif)
 
-### Image attachment
+### 图片附件
 
 ![Image attachment](https://user-images.githubusercontent.com/2964165/44611858-de09fc80-a7d1-11e8-90a1-f0b3a695e108.gif)
 
-### Export and import projects (in JSON format)
+### 导入 & 导出项目（使用 JSON 格式）
 
 ![Export and import projects (in JSON format)](https://user-images.githubusercontent.com/2964165/44611163-b87af400-a7cd-11e8-8364-1424e3d24682.png)
 
-### Dark mode and customization (WIP, more customizations are coming)
+### 字定义主题颜色
 
 ![Dark mode & customization](https://user-images.githubusercontent.com/2964165/44612138-e95e2780-a7d3-11e8-84b5-96533faf9888.gif)
 
-### 100% free and open source
+### 100% 免费 & 100% 开源
 
-## Roadmap
+## 路线
 
-The developpement is done in the `master` branch, once a build is stable enough (Still alpha), a snapshot will be created and the release page will be updated with the executables.
-These are the features that will be implemented next:
+`master` 分支用于开发阶段，一旦构建了一个稳定版（当前是 alpha 版），将在 release 页面看到更新和可执行文件。  
+下一步将实现下面的功能：
 
-- Support for other languages than English (translations)
-- Quick commands
-- Better image attachment (currently slows down the application)
-- Comments
-- Plugin system
-- Better milestone management
-- File attachments
+- 提供除了 English 外的其他语言包
+- 快捷键
+- 更好的图片附件（目前用的会使得应用变慢）
+- 评论
+- 插件系统
+- 更好的里程碑管理
+- 文件附件
 - Undo / Redo
 - Synchronize with GitHub and GitLab issues
-  - Import issues from GitHub/GitLab
+  - 从 GitHub/GitLab 导入 issue
   - Local changes are
-- Refactoring
-- Users
+- 重构
+- 用户
 - Updates
 
 ## Build
 
 ```bash
-# Clone the project
+# 克隆项目
 git clone https://github.com/Physiix/topsi-project-manager
 
-# Install dependencies (you can use npm too)
+# 安装依赖包（你也可以使用 npm）
 yarn
 
-# Run in developer mode
+# 以开发模式运行
 yarn run dev
 
-# Build the executable
+# 编译可执行文件
 yarn build
 ```
 
-## Contributions
+## 贡献
 
-All contributions are welcome: correcting typos, translations, reporting bugs,
-contributing code, writing documentation, …
+欢迎所有的贡献：修改拼写错误、翻译、报告 Bug、贡献代码、写文档等
 
-## Frameworks used in this project
+## 该项目使用的框架
 
-- Electron
-- Vue.js
-- Vuetify
-- Quill
-- Sortable
-- lowdb
+- Electron - 一款利用 Web 技术开发跨平台桌面应用的框架
+- Vue.js - 前端框架
+- Vuetify - Vue 的控件库
+- Quill - 编辑器
+- Sortable - 拖放排序
+- lowdb - 本地 JSON 数据库（支持 Node、Electron 和浏览器）
 
 ## License
 

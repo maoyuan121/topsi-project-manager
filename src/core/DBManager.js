@@ -1,8 +1,7 @@
-import {
-	DBUtils
-} from './database'
+import { DBUtils } from './database'
 
 const EXTENSION = '.json';
+
 class DBManager {
 	constructor() {
 		this.appDB = new DBUtils('database.json');
@@ -13,15 +12,15 @@ class DBManager {
 	}
 
 	/**
-	 * Get the main Database used by the application.
+	 * 获取主数据库
 	 */
 	GetAppDB() {
 		return this.appDB;
 	}
 
 	/**
-	 * Load a database into memory.
-	 * @param {Number} id Id of the database's project.
+	 * 加载 1 个数据库到内存中
+	 * @param {Number} id 数据库项目的 id
 	 */
 	Load(id, defaultFolder) {
 		this.databases[id + EXTENSION] = new DBUtils(id + EXTENSION, defaultFolder);
@@ -34,7 +33,7 @@ class DBManager {
 	}
 
 	/**
-	 * Get the database registered for the project with @param id
+	 * 根据给定的数据库 @param id 获取数据库
 	 * @param {String} id ID of the project.
 	 */
 	GetDB(id) {
@@ -42,9 +41,9 @@ class DBManager {
 	}
 
 	/**
-	 * Create a new Database for a project.
-	 * @param path Path where to store the database.
-	 * @return ID of the project to create the Database for.
+	 * 为项目创建 1 个新的数据库
+	 * @param path 数据的路径
+	 * @return 用于创建数据库的项目 id
 	 */
 	CreateDB(path) {
 		const id = this.appDB.GetId('projects_id');

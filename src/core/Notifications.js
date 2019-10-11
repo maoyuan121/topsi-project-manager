@@ -1,5 +1,14 @@
 const DEFAULT_TIME = 5000;
+
+// 通知对象
 export class NotificationEntry {
+	/**
+	 * 
+	 * @param {String} title 标题 
+	 * @param {String} description 描述
+	 * @param {Number} timeout TODO
+	 * @param {String} color css 类 
+	 */
 	constructor(title, description, timeout, color) {
 		this.title = title;
 		this.description = description;
@@ -7,12 +16,13 @@ export class NotificationEntry {
 		this.color = color;
 	}
 }
+
 class Notifications {
 	constructor() {
-		// Contains the notifications to display.
+		// 包含所有要显示的通知
 		this.queue = [];
 
-		// Whether it's ready do display.
+		// 是否准备显示了
 		this.ready = true;
 
 		// Loop and display the notifications in the queues

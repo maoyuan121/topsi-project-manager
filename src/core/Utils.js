@@ -1,16 +1,21 @@
+// 快捷键
 export class KeyData {
 	constructor(key, ctrlPress = false, altPress = false) {
+		// 按键
 		this.key = key;
+		// 是否需要按住 ctrl 键
 		this.ctrlPress = ctrlPress;
+		// 是否需要按住 alt 键
 		this.altPress = altPress;
 	}
 }
 
+// 工具类
 class Utils {
 	/**
-	 * Check if a click is done outside an element, and execute a callback if so.
-	 * @param {HTMLElement} element Element to check if the click is outside of.
-	 * @param {Function} callback Function to call when the click is outside the element.
+	 * 如果在 element 元素外点击，执行 callback
+	 * @param {HTMLElement} element 在这个元素外点击
+	 * @param {Function} callback 执行函数
 	 */
 	ClickOutside(element, callback) {
 		let firstTime = true;
@@ -28,10 +33,10 @@ class Utils {
 	}
 
 	/**
-	 * Same as @function ClickOutside but also listen to a key press.
-	 * @param {HTMLElement} element Element to check if the click is outside of.
-	 * @param {Function} callback Function to call when the click is outside the element.
-	 * @param {KeyData} keyData Key to listen to.
+	 * 和 @function ClickOutside 类似，但是额外监听了快捷键
+	 * @param {HTMLElement} element 在这个元素外点击
+	 * @param {Function} callback 执行函数
+	 * @param {KeyData} keyData 监听的快捷键
 	 */
 	ClickOutsideOrKeyPress(element, callback, keyData) {
 		const events = {
@@ -64,8 +69,8 @@ class Utils {
 	}
 
 	/**
-	 * Helper function to focus on the textfield.
-	 * @param {HTMLElement} textField Textfield to focus on.
+	 * 将光标聚焦在文本输入框
+	 * @param {HTMLElement} textField 要聚焦的文本输入框
 	 */
 	FocusTextField(textField) {
 		setTimeout(() => {

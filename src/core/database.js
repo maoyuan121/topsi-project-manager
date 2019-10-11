@@ -7,17 +7,24 @@ import os from 'os'
 const FileSync = require('lowdb/adapters/FileSync');
 
 
-//Class containing all kind of helper functions to access
-//write and alter the local database.
+// 包含所有数据库读写的函数
 export class DBUtils {
+	/**
+	 * 
+	 * @param {string} name  数据库文件名
+	 * @param {string} defaultPath 路径
+	 */
 	constructor(name, defaultPath) {
-		// Paths
+		// 路径
 		const dir = process.platform == 'darwin' ? path.join(os.homedir(), '.topsi') : path.resolve('.');
-		if (defaultPath == null || defaultPath.length <= 0) this.dataPath = path.join(dir, 'data/');
-		else this.dataPath = defaultPath;
+		if (defaultPath == null || defaultPath.length <= 0) {
+			this.dataPath = path.join(dir, 'data/');
+		} else {
+			this.dataPath = defaultPath;
+		}
 		const dbFilePath = path.join(this.dataPath, name);
 
-		// Make sure the 'data' folder exists
+		// 确保数据库文件夹存在
 		if (!fs.existsSync(this.dataPath)){
 			if(process.platform == 'darwin' && !fs.existsSync(dir)) fs.mkdirSync(dir);
 			fs.mkdirSync(this.dataPath);
@@ -27,17 +34,17 @@ export class DBUtils {
 	}
 
 	/**
-	 * Set a value in the Database.
-	 * @param {*string} key Key of the value to set.
-	 * @param {*any} value Value of the value to set.
+	 * 写
+	 * @param {*string} key 键
+	 * @param {*any} value 值
 	 */
 	SetValue(key, value) {
 		this.context.set(key, value).write();
 	}
 
 	/**
-	 * Retrieve and Id from the database and increment its value.
-	 * @param {*string} key Key of the id to retrieve
+	 * 获取一个新的数据库 id，自增的
+	 * @param {*string} key 获取 id 的键
 	 */
 	GetId(key) {
 		const id = this.GetValue(key, 0);
@@ -83,15 +90,15 @@ export class DBUtils {
 	}
 
 	/**
-	 * Save the state of the current database.
+	 * 保存当前状态
 	 */
 	Save() {
 		this.context.write();
 	}
 
-	//Get all the entries from a table.
-	//@param table Table to retrieve the entries from.
-	//@orderBy [optional] Member data to order the list with.
+	// 获取一个表中的所有 entity
+	//@param table 表
+	//@orderBy [optional] 用那个字段排序
 	GetAll(table, orderBy = null, filters = null) {
 		let result = this.context.get(table);
 
@@ -107,41 +114,41 @@ export class DBUtils {
 		return result.value();
 	}
 
-	// Retrieve a single entry form the Database.
-	// @param table Table to retrieve the data from.
-	// @param id Id of the entry to retrieve.
+	// 从数据库中获取一个 entity
+	// @param table 表
+	// @param id entity 的主键
 	GetById(table, id) {
 		return this.context.get(table).filter({
 			id: id
 		}).first().value();
 	}
 
-	// Retrieve a single entry form the Database.
-	// @param table Table to retrieve the data from.
-	// @param filter Object filtering the query.
+	// 按过滤条件从数据库中获取一个 entity
+	// @param table 表
+	// @param filter 过滤条件
 	GetBy(table, filter) {
 		return this.context.get(table).filter(filter).first().value();
 	}
 
 	/**
-	 * Update the content of an object in the database.
-	 * @param {*string} table Object Table's name.
-	 * @param {*int} key Key of the object(s) to update.
-	 * @param {*object} data Contains the new data to store within the object.
+	 * 更新
+	 * @param {*string} table 表
+	 * @param {*int} key 键
+	 * @param {*object} data 值
 	 */
 	Update(table, key, data) {
-		// Adding timestamp.
+		// 时间戳
 		data.timestamp = Date.now();
 
-		// Updating the data
+		// 更新数据
 		const t = this.context.get(table);
 		if (key != null) t.find(key).assign(data).write();
 		else t.assign(data).write();
 	}
 
 	/**
-	 * Retrieve the absolute path of the file storing the database.
-	 * @return {*string} Path to the database.
+	 * 获取数据库文件的绝对路径
+	 * @return {*string} 数据库的路径
 	 */
 	GetPath() {
 		return dbFilePath;
