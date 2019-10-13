@@ -1,6 +1,9 @@
 import DBManager from "../../../core/DBManager";
 import Notifications from '../../../core/Notifications'
 
+/**
+ * Note 的数据结构
+ */
 class Note {
 	constructor(project_id, title, description, category, color, milestone_id, tags) {
 		this.id = -1;

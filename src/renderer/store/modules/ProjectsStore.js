@@ -2,8 +2,16 @@ import DBManager from "../../../core/DBManager";
 import Notifications from "../../../core/Notifications";
 import EventManager from '../../../core/EventManager.js';
 
-
+/**
+ * 项目的数据结构
+ */
 class Project {
+	/**
+	 * 
+	 * @param {String} title 项目名
+	 * @param {String} description 描述
+	 * @param {*} categories 分类
+	 */
 	constructor(title, description, categories) {
 		this.id = -1;
 		this.title = title;
@@ -15,15 +23,24 @@ class Project {
 }
 
 const state = {
-	// Contains all the projects created in the application.
+	/**
+	 * 整个应用的所有项目
+	 */
 	projects: null,
 }
 
 const getters = {
+	/**
+	 * 根据 id 获取一个项目
+	 * @param {*} state 
+	 */
 	getProjectById(state) {
 		return (id) => state.projects.filter(project => project.id == id)[0];
 	},
 
+	/**
+	 * 所有项目
+	 */
 	projects(state) {
 		return state.projects;
 	}
@@ -31,7 +48,7 @@ const getters = {
 
 const mutations = {
 	/**
-	 * Retrieve all the projects from the database.
+	 * 从数据库获取所有项目
 	 * @param {*State} state ProjectStore state.
 	 */
 	RetrieveProjects(state) {

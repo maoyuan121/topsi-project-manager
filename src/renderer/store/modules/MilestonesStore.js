@@ -65,7 +65,10 @@ const mutations = {
 	 * Get all the milestones from the current project's database.
 	 */
 	UpdateMilestones(state, data) {
-		if (data.projectId == null) throw new Error('UpdateMilestones: Project id required.');
+		if (data.projectId == null) {
+			throw new Error('UpdateMilestones: Project id required.');
+		}
+
 		state.milestones = DBManager.GetDB(data.projectId).GetAll('milestones', 'id');
 	}
 }

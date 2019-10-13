@@ -1,3 +1,4 @@
+// 默认通知显示多少 ms
 const DEFAULT_TIME = 5000;
 
 // 通知对象
@@ -6,7 +7,7 @@ export class NotificationEntry {
 	 * 
 	 * @param {String} title 标题 
 	 * @param {String} description 描述
-	 * @param {Number} timeout TODO
+	 * @param {Number} timeout 默认通知展示多少 ms
 	 * @param {String} color css 类 
 	 */
 	constructor(title, description, timeout, color) {
@@ -17,6 +18,8 @@ export class NotificationEntry {
 	}
 }
 
+// 通知管理器
+// 里面放了一个队列数组，提供方法往队列里面插入通知通知数据， 每隔 150 ms 从队列里面取出数据，弹出通知
 class Notifications {
 	constructor() {
 		// 包含所有要显示的通知
@@ -35,20 +38,20 @@ class Notifications {
 	}
 
 	/**
-	 * 	Display an info notification in the screen.
-	 * @param {String} title Title of the notification to display.
-	 * @param {String} description Description of the notification to display.
-	 * @param {Number} timout Time before destroying the notification.
+	 * 	添加一个信息提示通知
+	 * @param {String} title 标题
+	 * @param {String} description 内容
+	 * @param {Number} timout 展示多少 ms
 	 */
 	Info(title, description = '', timeout = DEFAULT_TIME) {
 		this.queue.push(new NotificationEntry(title, description, timeout, 'primary white--text'));
 	}
 
 	/**
-	 * 	Display an error notification in the screen.
-	 * @param {String} title Title of the notification to display.
-	 * @param {String} description Description of the notification to display.
-	 * @param {Number} timout Time before destroying the notification.
+	 * 	添加一个错误提示通知
+	 * @param {String} title 标题
+	 * @param {String} description 内容
+	 * @param {Number} timout 展示多少 ms
 	 */
 	Error(title, description = '', timeout = DEFAULT_TIME) {
 		this.queue.push(new NotificationEntry(title, description, timeout, 'error white--text'));
@@ -57,10 +60,10 @@ class Notifications {
 
 
 	/**
-	 * 	Display an error notification in the screen.
-	 * @param {String} title Title of the notification to display.
-	 * @param {String} description Description of the notification to display.
-	 * @param {Number} timout Time before destroying the notification.
+	 * 	添加一个警告提示通知
+	 * @param {String} title 标题
+	 * @param {String} description 内容
+	 * @param {Number} timout 展示多少 ms
 	 */
 	Warning(title, description = '', timeout = DEFAULT_TIME) {
 		this.queue.push(new NotificationEntry(title, description, timeout, 'warning white--text'));
@@ -68,10 +71,10 @@ class Notifications {
 
 
 	/**
-	 * 	Display an error notification in the screen.
-	 * @param {String} title Title of the notification to display.
-	 * @param {String} description Description of the notification to display.
-	 * @param {Number} timout Time before destroying the notification.
+	 * 	添加一个成功提示通知
+	 * @param {String} title 标题
+	 * @param {String} description 内容
+	 * @param {Number} timout 展示多少 ms
 	 */
 	Success(title, description = '', timeout = DEFAULT_TIME) {
 		this.queue.push(new NotificationEntry(title, description, timeout, 'success white--text'));
@@ -79,14 +82,14 @@ class Notifications {
 
 
 	/**
-	 * Setup the notification system. 
+	 * 通知
 	 * @param {NotificationEntry} entry Contains the info about the notification.
 	 */
 	Notify(entry) {
 		const nElement = document.createElement('div');
 		document.querySelector('body').appendChild(nElement);
 
-		// Basic customization 
+		// 通知层的样式设置
 		const color = entry.color;
 		const left = window.innerWidth - 260;
 		nElement.className = color + ' notification-card';
@@ -94,7 +97,7 @@ class Notifications {
 		nElement.style.width = '250px';
 		nElement.style.left = left + 'px';
 
-		// Populating the notification its info.
+		// 通知层的标题和内容跳虫
 		const eTitle = document.createElement('div');
 		eTitle.className = 'v-card__title title pa-2';
 		eTitle.innerHTML = entry.title;
@@ -104,7 +107,7 @@ class Notifications {
 		nElement.appendChild(eTitle);
 		nElement.appendChild(eDesc);
 
-		// Calculating the dimnesions
+		// 计算高度
 		const height = nElement.clientHeight;
 		const totalHeight = height + 10;
 

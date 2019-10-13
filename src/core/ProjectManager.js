@@ -4,9 +4,7 @@ const p = require('path');
 
 import store from '../renderer/store'
 import Vue from 'vue'
-import {
-	Notifications
-} from './Notifications';
+import { Notifications } from './Notifications';
 const vue = new Vue({
 	store
 });
