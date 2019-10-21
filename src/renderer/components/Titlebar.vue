@@ -31,7 +31,7 @@ export default {
     name: "Titlebar",
     data() {
         return {
-            maximized: false,
+            maximized: false, // 是否已经是最大化
             window: null
         };
     },
@@ -43,8 +43,7 @@ export default {
         },
 
         /**
-         * Get the name of the project if opened.
-         * Empty string if not.
+         * 获取打开的项目的名称，如果没有打开的项目则返回空
          */
         projectName() {
             const projectName = this.$store.getters.projectName;
@@ -76,12 +75,16 @@ export default {
 
     mounted() {
         const titlebar = document.getElementById("titlebar");
+
+        // 设置样式。fixed 最上
         titlebar.style.position = "fixed";
         titlebar.style.left = "0";
         titlebar.style.top = "0";
         titlebar.style.height = "30px";
         titlebar.style.width = window.innerWidth + "px";
         titlebar.style.zIndex = 10;
+
+        // 动态修改宽度
         window.addEventListener("resize", () => {
             titlebar.style.width = window.innerWidth + "px";
         });

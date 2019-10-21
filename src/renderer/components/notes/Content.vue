@@ -28,27 +28,29 @@ import Note from './Note.vue'
 import Sortable from 'sortablejs'
 import Utils from '../../../core/Utils'
 
+// 一个 note 泳道
 export default {
 	name: 'Content',
 	components: {
 		Note
 	},
 	props: {
-		id: String,
-		projectId: Number,
-		category: Object
+		id: String, // id 标识
+		projectId: Number, // 项目 id
+		category: Object // 分类
 	},
 	data() {
 		return {
-			editTitle: false,
-			editedTitle: ''
+			editTitle: false, // 是否处在编辑标题状态中
+			editedTitle: '' // 编辑的 title 名
 		}
 	},
 	computed: {
-		title: {
+		title: {			
 			get() {
 				return this.category.title;
 			},
+
 			set(value) {
 				if (value == this.category.title) return;
 				this.$store.dispatch('UpdateCategory', {
@@ -61,7 +63,10 @@ export default {
 
 		notes() {
 			return this.$store.getters.notes.filter(note => {
-				if (note.category != this.category.tag) return false;
+				if (note.category != this.category.tag) {
+					return false;
+				}
+
 				const searchContent = this.searchContent;
 				return note.title.toLowerCase().includes(searchContent) || note.tags.some(tag => tag.tag.toLowerCase().includes(searchContent));
 			});
@@ -72,6 +77,9 @@ export default {
 		}
 	},
 	methods: {
+		/**
+		 * 折叠
+		 */
 		Fold() {
 			this.$store.dispatch('ToggleFoldCategory', {
 				projectId: this.projectId,
@@ -79,6 +87,10 @@ export default {
 			});
 		},
 
+		/**
+		 * 双击标题要触发的编辑标题状态
+		 * 按 ESC 按键，或在文本框外点击便退出编辑状态
+		 */
 		EditTitle() {
 			this.editTitle = true;
 			this.editedTitle = this.title;
@@ -90,6 +102,9 @@ export default {
 			}, { key: 'Escape' })
 		},
 
+		/**
+		 * 更新标题
+		 */
 		UpdateTitle() {
 			this.editTitle = false;
 			this.title = this.editedTitle;
@@ -129,11 +144,13 @@ export default {
 	height: 100%;
 }
 
+/* 第一列第一行 */
 .top{
 	grid-column: 1 / 2;
 	grid-row: 1 / 2;
 }
 
+/* 第一列第二行 */
 .bottom{
 	grid-column: 1 / 2;
 	grid-row: 2 / 3;
@@ -154,6 +171,7 @@ export default {
 	background-color: inherit;
 }
 
+/* 第二列 所有行 */
 .vline{
 	grid-column: 2 /3;
 	grid-row: 1 /3

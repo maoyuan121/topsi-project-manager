@@ -6,6 +6,7 @@
 </template>
 <script>
 
+// 提示文本
 export default {
 	name: 'Tooltip',
 	props: {

@@ -40,22 +40,28 @@ export default {
         Helper
     },
     computed: {
+        // 是否显示所有项目
+        // 如果当前没有打开某一个项目的话就显示所有项目
         displayProjects() {
             return !this.$store.getters.isProjectOpened;
         },
 
+        // 是否是第一次使用
         firstTimeUse() {
             return this.$store.getters.isFirstTimeUse;
         },
 
+        // 是否显示搜索框
         showSearch() {
             return this.$store.getters.isShowSearch;
         },
 
+        // 是否显示帮助
         showHelper() {
             return this.$store.getters.isShowHelper;
         },
 
+        // 是否是 macos
         macos() {
             return this.$store.getters.isMac;
         }
@@ -64,12 +70,15 @@ export default {
         KeyUp(event) {}
     },
     mounted() {
+        // 设置 landing page 的布局
         AppManager.SetupLandingPage(
             this.macos ? 0 : 30,
             "container",
             "side",
             "content"
         );
+        
+        // 设置快捷键
         InputManager.Initialize(this);
     }
 };

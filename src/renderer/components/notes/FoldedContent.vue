@@ -12,13 +12,15 @@
 </template>
 <script>
 
+// 一个折叠了的分类泳道
 export default {
 	name: 'FoldedContent',
 	props: {
-		projectId: Number,
-		category: Object
+		projectId: Number, // 项目 id
+		category: Object // 分类
 	},
 	methods: {
+		// 取消折叠
 		Unfold() {
 			this.$store.dispatch('ToggleFoldCategory', {
 				projectId: this.projectId,

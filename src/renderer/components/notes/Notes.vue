@@ -25,6 +25,7 @@ import UpdateNoteDialog from '../dialogs/UpdateNoteDialog.vue'
 import UpdateProjectDialog from '../dialogs/UpdateProjectDialog.vue'
 import Content from './Content.vue'
 
+// 整个 note 模块
 export default {
 	name: 'Notes',
 	components: {
@@ -37,23 +38,33 @@ export default {
 		MilestonesList
 	},
 	computed: {
+		/**
+		 * 打开的项目于 id 
+		 */
 		projectId() {
 			return this.$store.state.AppStore.openedProjectId;
 		},
 
+		/**
+		 * 打开的项目
+		 */
 		project() {
 			const id = this.projectId;
 			return this.$store.getters.getProjectById(id);
 		},
 
+		// 项目的所有分类
+		// 一个分类一个泳道
 		categories() {
 			return this.project.categories;
 		},
 
+		// 是否显示创建 note 对话框
 		createDialog() {
 			return this.$store.state.AppStore.dialogs.createNote
 		},
 
+		// 是否显示编辑 note 对话框
 		updateDialog() {
 			return this.$store.state.AppStore.dialogs.updateNote
 		},
@@ -66,18 +77,24 @@ export default {
 			return this.$store.getters.isUpdateProject;
 		},
 
+		// 颜色 css class
 		color() {
 			if (this.$store.getters.isDarkMode)
 				return '';
 			else return 'grey lighten-2'
 		},
 
+		/**
+		 * 是否是 macos
+		 */
 		macos() {
 			return this.$store.getters.isMac;
 		}
 	},
 	mounted() {
+		// 设置页面布局
 		AppManager.SetupNotesPage((this.macos ? 0 : 30), 'notes_container', 'container', this.categories.filter(category => !category.folded).map(category => category.tag), this.categories.filter(category => category.folded).map(category => category.tag));
+		
 		EventManager.Subscribe('update-notes-component', () => {
 			this.$nextTick(() => {
 				AppManager.SetupNotesPage((this.macos ? 0 : 30), 'notes_container', 'container', this.categories.filter(category => !category.folded).map(category => category.tag), this.categories.filter(category => category.folded).map(category => category.tag), false);

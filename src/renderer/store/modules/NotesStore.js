@@ -5,373 +5,396 @@ import Notifications from '../../../core/Notifications'
  * Note 的数据结构
  */
 class Note {
-	constructor(project_id, title, description, category, color, milestone_id, tags) {
-		this.id = -1;
-		this.project_id = project_id;
-		this.title = title;
-		this.description = description;
-		this.category = category;
-		this.color = color;
-		this.milestone_id = milestone_id;
-		this.tags = tags || [];
-		this.order = 0;
-		this.tasks = [];
-	}
+    constructor(project_id, title, description, category, color, milestone_id, tags) {
+        this.id = -1;
+        this.project_id = project_id;
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.color = color;
+        this.milestone_id = milestone_id;
+        this.tags = tags || [];
+        this.order = 0;
+        this.tasks = [];
+    }
 }
 
 const state = {
-	// Flag to show or hide a menu for items
-	menu: {
-		show: false,
-		x: 0,
-		y: 0,
-		note: null
-	},
+    // Flag to show or hide a menu for items
+    menu: {
+        show: false,
+        x: 0,
+        y: 0,
+        note: null
+    },
 
-	// Note to Update.
-	updatedNote: null,
+    // 要更新的 note 
+    updatedNote: null,
 
-	// Note to visualize
-	openedNote: null,
+    // 打开的 note
+    openedNote: null,
 
-	// Contains all the notes for the currently opened project.
-	notes: null,
+    // 当前项目的所有 note
+    notes: null,
 
-	// Id of the currently opened project.
-	projectId: -1,
+    // 当前打开项目的 id
+    projectId: -1,
 
-	milestoneId: 0,
+    // 里程碑
+    milestoneId: 0,
 
-	// Whether to display the tasks or not.
-	displayTasks: DBManager.GetAppDB().GetValue('display_tasks', true),
+    // 是否显示 task
+    displayTasks: DBManager.GetAppDB().GetValue('display_tasks', true),
 }
 
 const getters = {
-	notes(state) {
-		return state.notes;
-	},
+    // 当前项目的所有 note
+    notes(state) {
+        return state.notes;
+    },
 
-	isDisplayTasks(state) {
-		return state.displayTasks;
-	}
+    // 是否显示 task
+    isDisplayTasks(state) {
+        return state.displayTasks;
+    }
 }
 
 const mutations = {
-	/**
-	 * This function checks if the note's data in param is valid
-	 * and store it in the database. 
-	 * @param {*State} state NotesStore state.
-	 * @param {*Note} data Contains the note's project id, title, description and category.
-	 */
-	CreateNote(state, data) {
-		// Make sure the note's data is valid.
-		if (data.project_id == null || data.title == null || data.description == null || data.category == null || data.milestoneId == null)
-			Notifications.Error('CreateNote', "Cannot create a note with invalid data " + data);
+    /**
+     * 创建 Note，并保存到数据库
+     * and store it in the database. 
+     * @param {*State} state NotesStore state.
+     * @param {*Note} data Contains the note's project id, title, description and category.
+     */
+    CreateNote(state, data) {
+        // Make sure the note's data is valid.
+        if (data.project_id == null || data.title == null || data.description == null || data.category == null || data.milestoneId == null) {
+            Notifications.Error('CreateNote', "Cannot create a note with invalid data " + data);
+        }
 
-		// Create the new note to store.
-		let note = new Note(data.project_id, data.title, data.description, data.category, data.color, data.milestoneId, data.tags)
+        // Create the new note to store.
+        let note = new Note(data.project_id, data.title, data.description, data.category, data.color, data.milestoneId, data.tags)
 
-		const database = DBManager.GetDB(data.project_id);
+        const database = DBManager.GetDB(data.project_id);
 
-		// Set the order for the note.
-		note.order = state.notes.filter(note => note.category == data.category).length;
+        // 设置 note 的排序号
+        note.order = state.notes.filter(note => note.category == data.category).length;
 
-		// Getting the new ID for the note.
-		note.id = database.GetId('notes_id');
+        // Getting the new ID for the note.
+        note.id = database.GetId('notes_id');
 
-		// Store the note in the database.
-		database.Write('notes', note);
-	},
+        // Store the note in the database.
+        database.Write('notes', note);
+    },
 
-	/**
-	 * Update the order and category of a note.
-	 * @param {*} data Contains the HTMLElement of the note in @param data.note, the receiving tag in * @param data.tag and the old and new indices in @param data.newIndex and @param data.oldIndex
-	 * respectively.
-	 */
-	UpdateNotesOrder(state, data) {
-		if (data.note == null || data.tag == null || data.oldIndex == null || data.newIndex == null) throw new Error('UpdateNotesOrder: All or some data attributes missing.');
+    /**
+     * 更新 note 的排序号和分类
+     * @param {*} data Contains the HTMLElement of the note in @param data.note, the receiving tag in * @param data.tag and the old and new indices in @param data.newIndex and @param data.oldIndex
+     * respectively.
+     */
+    UpdateNotesOrder(state, data) {
+        if (data.note == null || data.tag == null || data.oldIndex == null || data.newIndex == null) {
+            throw new Error('UpdateNotesOrder: All or some data attributes missing.');
+        }
 
-		// Function to sanitize the HTMLElement ID of a note. 
-		const SanitizeNoteId = (id) => {
-			return id.substr(id.indexOf('-') + 1, id.length - 1);
-		}
+        // Function to sanitize the HTMLElement ID of a note. 
+        const SanitizeNoteId = (id) => {
+            return id.substr(id.indexOf('-') + 1, id.length - 1);
+        }
 
-		const db = DBManager.GetDB(state.projectId);
+        const db = DBManager.GetDB(state.projectId);
 
-		// Setup the notes to work with.
-		const projectNotes = db.GetAll('notes');
-		const currentNotes = projectNotes.filter(note => note.milestone_id == state.milestoneId);
+        // 获取当前项目于的所有 note
+        const projectNotes = db.GetAll('notes');
+        // 获取当前项目指定里程碑的 note
+        const currentNotes = projectNotes.filter(note => note.milestone_id == state.milestoneId);
 
-		// Getting the note that has been moved.
-		const note = currentNotes.filter(n => n.id == SanitizeNoteId(data.note.id))[0];
+        // Getting the note that has been moved.
+        const note = currentNotes.filter(n => n.id == SanitizeNoteId(data.note.id))[0];
 
-		// Removing the note from the last category.
-		const sourceNotes = currentNotes.filter(n => n.category == note.category)
-		sourceNotes.splice(data.oldIndex, 1);
+        // 获取同一个分类下的 note 
+        const sourceNotes = currentNotes.filter(n => n.category == note.category);
+        sourceNotes.splice(data.oldIndex, 1);
 
-		// Adding the note to the new category/
-		let destNotes = null
-
-
-		// If the note stays in the same category, then the source and destinatimn array are the same.
-		if (note.category == data.tag)
-			destNotes = sourceNotes
-		else
-			destNotes = currentNotes.filter(n => n.category == data.tag);
-
-		// Insert the new note in the appropriate index.
-		destNotes.splice(data.newIndex, 0, note);
-
-		// This update the new note of the receiving category with the new order.
-		for (let i = 0; i < destNotes.length; i++) destNotes[i].order = i;
-
-		note.category = data.tag;
-
-		// Save the new order in the database.
-		db.SetValue('notes', projectNotes);
-	},
-
-	/**
-	 * Set the note to update.
-	 * @param {*State} state NotesStore state.
-	 * @param {*Note} data Contains the note to update.
-	 */
-	SetUpdatedNote(state, note) {
-		if (note == null) throw new Error("SetUpdatedNote: note parameter required.")
-		state.updatedNote = note;
-	},
-
-	/**
-	 * This function checks if the note's data in param is valid
-	 * and update it in the database. 
-	 * @param {*State} state NotesStore state.
-	 * @param {*Note} data Contains the note's project id, title, description and category.
-	 */
-	UpdateNote(state, data) {
-		// Make sure the note's data is valid.
-		if (data.id == null || data.project_id == null || data.title == null || data.description == null || data.category == null || data.milestone_id == null)
-			throw new Error("Cannot update a note with invalid data ", data);
-
-		// Update the timestamp
-		data.updated_timestamp = Date.now();
-
-		const database = DBManager.GetDB(data.project_id);
-
-		// Create the new note to store.
-		database.Update('notes', {
-			id: data.id
-		}, data);
-	},
+        // Adding the note to the new category/
+        let destNotes = null
 
 
-	/**
-	 * Set the note to visualize.
-	 * @param {*State} state NotesStore state.
-	 * @param {*Note} data Contains the note to visualize.
-	 */
-	SetOpenedNote(state, note) {
-		if (note == null) throw new Error("SetOpenedNote: note parameter required.")
-		state.openedNote = note;
-	},
+        // If the note stays in the same category, then the source and destinatimn array are the same.
+        if (note.category == data.tag)
+            destNotes = sourceNotes
+        else
+            destNotes = currentNotes.filter(n => n.category == data.tag);
 
-	SetShowMenu(state, value) {
-		state.menu.show = value;
-	},
+        // 插入新的 note 到合适的位置
+        destNotes.splice(data.newIndex, 0, note);
 
-	SetMenuX(state, value) {
-		state.menu.x = value;
-	},
+        // This update the new note of the receiving category with the new order.
+        for (let i = 0; i < destNotes.length; i++) destNotes[i].order = i;
 
-	SetMenuY(state, value) {
-		state.menu.y = value;
-	},
+        note.category = data.tag;
 
-	SetMenuData(state, data) {
-		state.menu.show = data.show;
-		state.menu.x = data.x;
-		state.menu.y = data.y;
-		state.menu.note = data.note;
-	},
+        // Save the new order in the database.
+        db.SetValue('notes', projectNotes);
+    },
 
-	/**
-	 * Update the notes array.
-	 * @param {Object} state Current state of the Application.
-	 * @param {Object} data Contains the data about the project to retrieve the notes for.
-	 */
-	UpdateNotes(state, data) {
-		state.projectId = data.projectId;
-		state.milestoneId = data.milestoneId;
-		state.notes = DBManager.GetDB(data.projectId).GetAll('notes', 'order', [{
-			milestone_id: data.milestoneId
-		}]);
-	},
+    /**
+     * 设置要更新的 note
+     * @param {*State} state NotesStore state.
+     * @param {*Note} data Contains the note to update.
+     */
+    SetUpdatedNote(state, note) {
+        if (note == null) {
+            throw new Error("SetUpdatedNote: note parameter required.")
+        }
 
-	/**
-	 * Delete a note from a project permnanently.
-	 * @param {Object} state Current state of the Application.
-	 * @param {Object} note Note to delete.
-	 */
-	DeleteNote(state, note) {
-		DBManager.GetDB(note.project_id).Remove('notes', {
-			id: note.id
-		});
-	},
+        state.updatedNote = note;
+    },
 
-	/**
-	 * Add a task to the currently opened note.
-	 * @param {Object} state Current state of the Application.
-	 * @param {String} task Content of the task to add.
-	 */
-	AddTask(state, data) {
-		if (state.openedNote == null || data.task == null || data.task.length <= 0 || data.projectId < 0 || data.projectId == null)
-			Notifications.Error('Add task', `Cannot add task ${data.task}`);
+    /**
+     * 更新 note，保存到数据库
+     * @param {*State} state NotesStore state.
+     * @param {*Note} data Contains the note's project id, title, description and category.
+     */
+    UpdateNote(state, data) {
+        // 数据验证
+        if (data.id == null || data.project_id == null || data.title == null || data.description == null || data.category == null || data.milestone_id == null) {
+            throw new Error("Cannot update a note with invalid data ", data);
+        }
 
-		const projectDB = DBManager.GetDB(data.projectId);
-		state.openedNote.tasks = state.openedNote.tasks || [];
-		state.openedNote.tasks.push({
-			id: projectDB.GetId('tasks_id'),
-			content: data.task,
-			done: false
-		});
-		projectDB.Update('notes', {
-			id: state.openedNote.id
-		}, state.openedNote);
-	},
+        // 更新时间戳
+        data.updated_timestamp = Date.now();
 
-	/**
-	 * Add a task to the currently opened note.
-	 * @param {Object} state Current state of the Application.
-	 * @param {Object} task Task to update. 
-	 */
-	ToggleTask(state, data) {
-		if (state.openedNote == null || data.task.id == null || data.projectId < 0 || data.projectId == null || state.openedNote.tasks == null)
-			Notifications.Error('Add task', `Cannot add task ${data.task}`);
+        const database = DBManager.GetDB(data.project_id);
 
-		const projectDB = DBManager.GetDB(data.projectId);
-		const task = state.openedNote.tasks.filter(task => task.id == data.task.id)[0];
-		task.done = !task.done;
-		projectDB.Update('notes', {
-			id: state.openedNote.id
-		}, state.openedNote);
-	},
+        // 保存到数据库
+        database.Update('notes', {
+            id: data.id
+        }, data);
+    },
 
-	ToggleDisplayTasks(state) {
-		state.displayTasks = !state.displayTasks;
-		DBManager.GetAppDB().SetValue('display_tasks', state.displayTasks);
-	},
 
-	ReorderTasks(state, data) {
-		if (state.openedNote == null || data.newIndex == null || data.oldIndex < 0)
-			Notifications.Error('Redorder Task', `Cannot reorder task ${data.task}`);
+    /**
+     * 设置打开的 note 
+     * @param {*State} state NotesStore state.
+     * @param {*Note} data Contains the note to visualize.
+     */
+    SetOpenedNote(state, note) {
+        if (note == null) {
+            throw new Error("SetOpenedNote: note parameter required.")
+        }
+        state.openedNote = note;
+    },
 
-		const newIndex = data.newIndex;
-		const oldIndex = data.oldIndex;
+    SetShowMenu(state, value) {
+        state.menu.show = value;
+    },
 
-		const projectDB = DBManager.GetDB(state.projectId);
-		// const task = state.openedNote.tasks.filter(task => task.id == data.task.id)[0];
-		// task.done = !task.done;
-		const tmp = state.openedNote.tasks[oldIndex];
-		state.openedNote.tasks[oldIndex] = state.openedNote.tasks[newIndex];
-		state.openedNote.tasks[newIndex] = tmp;
+    SetMenuX(state, value) {
+        state.menu.x = value;
+    },
 
-		projectDB.Update('notes', {
-			id: state.openedNote.id
-		}, state.openedNote);
-	},
+    SetMenuY(state, value) {
+        state.menu.y = value;
+    },
 
-	UpdateNotesCategory(state, data) {
-		if (data.projectId == null || data.category == null || data.newTitle == null) Notifications.Error('UpdateNotesCategory', `Cannot update note's category. ${data}`);
+    SetMenuData(state, data) {
+        state.menu.show = data.show;
+        state.menu.x = data.x;
+        state.menu.y = data.y;
+        state.menu.note = data.note;
+    },
 
-		const projectDB = DBManager.GetDB(data.projectId);
+    /**
+     * 更新 notes 数组
+     * @param {Object} state Current state of the Application.
+     * @param {Object} data Contains the data about the project to retrieve the notes for.
+     */
+    UpdateNotes(state, data) {
+        state.projectId = data.projectId;
+        state.milestoneId = data.milestoneId;
+        state.notes = DBManager.GetDB(data.projectId).GetAll('notes', 'order', [{
+            milestone_id: data.milestoneId
+        }]);
+    },
 
-		const category = data.newTitle.replace(/ /g, '_').toLowerCase();
+    /**
+     * 删除 note 
+     * @param {Object} state Current state of the Application.
+     * @param {Object} note Note to delete.
+     */
+    DeleteNote(state, note) {
+        DBManager.GetDB(note.project_id).Remove('notes', {
+            id: note.id
+        });
+    },
 
-		// Update the categories
-		state.notes.forEach(note => {
-			if (note.category == data.category.tag) note.category = category;
-		})
+    /**
+     * 添加一个 task 到当前打开的 note
+     * @param {Object} state Current state of the Application.
+     * @param {String} task Content of the task to add.
+     */
+    AddTask(state, data) {
+        if (state.openedNote == null || data.task == null || data.task.length <= 0 || data.projectId < 0 || data.projectId == null) {
+            Notifications.Error('Add task', `Cannot add task ${data.task}`);
+        }
 
-		projectDB.SetValue('notes', state.notes);
-	}
+        const projectDB = DBManager.GetDB(data.projectId);
+        state.openedNote.tasks = state.openedNote.tasks || [];
+        state.openedNote.tasks.push({
+            id: projectDB.GetId('tasks_id'),
+            content: data.task,
+            done: false
+        });
+
+        projectDB.Update('notes', {
+            id: state.openedNote.id
+        }, state.openedNote);
+    },
+
+    /**
+     * toggle 一个 task 的完成中台
+     * @param {Object} state Current state of the Application.
+     * @param {Object} task Task to update. 
+     */
+    ToggleTask(state, data) {
+        if (state.openedNote == null || data.task.id == null || data.projectId < 0 || data.projectId == null || state.openedNote.tasks == null) {
+            Notifications.Error('Add task', `Cannot add task ${data.task}`);
+        }
+
+        const projectDB = DBManager.GetDB(data.projectId);
+        const task = state.openedNote.tasks.filter(task => task.id == data.task.id)[0];
+        task.done = !task.done;
+        projectDB.Update('notes', {
+            id: state.openedNote.id
+        }, state.openedNote);
+    },
+
+    // toggle 是否显示 tasks
+    ToggleDisplayTasks(state) {
+        state.displayTasks = !state.displayTasks;
+        DBManager.GetAppDB().SetValue('display_tasks', state.displayTasks);
+    },
+
+    // 更新 task 的排序
+    ReorderTasks(state, data) {
+        if (state.openedNote == null || data.newIndex == null || data.oldIndex < 0) {
+            Notifications.Error('Redorder Task', `Cannot reorder task ${data.task}`);
+        }
+
+        const newIndex = data.newIndex;
+        const oldIndex = data.oldIndex;
+
+        const projectDB = DBManager.GetDB(state.projectId);
+        // const task = state.openedNote.tasks.filter(task => task.id == data.task.id)[0];
+        // task.done = !task.done;
+        const tmp = state.openedNote.tasks[oldIndex];
+        state.openedNote.tasks[oldIndex] = state.openedNote.tasks[newIndex];
+        state.openedNote.tasks[newIndex] = tmp;
+
+        projectDB.Update('notes', {
+            id: state.openedNote.id
+        }, state.openedNote);
+    },
+
+    // 更新 note 所属分类
+    UpdateNotesCategory(state, data) {
+        if (data.projectId == null || data.category == null || data.newTitle == null) {
+            Notifications.Error('UpdateNotesCategory', `Cannot update note's category. ${data}`);
+        }
+
+        const projectDB = DBManager.GetDB(data.projectId);
+
+        const category = data.newTitle.replace(/ /g, '_').toLowerCase();
+
+        // Update the categories
+        state.notes.forEach(note => {
+            if (note.category == data.category.tag) {
+                note.category = category;
+            }
+        })
+
+        projectDB.SetValue('notes', state.notes);
+    }
 }
 
 const actions = {
-	CreateNote(context, data) {
-		context.commit('CreateNote', data);
+    CreateNote(context, data) {
+        context.commit('CreateNote', data);
 
-		// Update the state
-		context.commit('UpdateNotes', {
-			projectId: data.project_id,
-			milestoneId: data.milestoneId
-		});
-	},
+        // Update the state
+        context.commit('UpdateNotes', {
+            projectId: data.project_id,
+            milestoneId: data.milestoneId
+        });
+    },
 
-	UpdateNote(context, data) {
-		context.commit('UpdateNote', data);
+    UpdateNote(context, data) {
+        context.commit('UpdateNote', data);
 
-		// Retrieve the new values as saved from the database. 
-		context.commit('UpdateNotes', {
-			projectId: state.projectId,
-			milestoneId: state.milestoneId
-		});
-	},
+        // Retrieve the new values as saved from the database. 
+        context.commit('UpdateNotes', {
+            projectId: state.projectId,
+            milestoneId: state.milestoneId
+        });
+    },
 
-	DeleteNote(context, note) {
-		context.commit('DeleteNote', note);
+    DeleteNote(context, note) {
+        context.commit('DeleteNote', note);
 
-		// Retrieve the new values as saved from the database. 
-		context.commit('UpdateNotes', {
-			projectId: state.projectId,
-			milestoneId: state.milestoneId
-		});
-	},
+        // Retrieve the new values as saved from the database. 
+        context.commit('UpdateNotes', {
+            projectId: state.projectId,
+            milestoneId: state.milestoneId
+        });
+    },
 
-	UpdateNotesOrder(context, data) {
-		context.commit('UpdateNotesOrder', data);
+    UpdateNotesOrder(context, data) {
+        context.commit('UpdateNotesOrder', data);
 
-		// Retrieve the new values as saved from the database. 
-		context.commit('UpdateNotes', {
-			projectId: state.projectId,
-			milestoneId: state.milestoneId
-		})
-	},
+        // Retrieve the new values as saved from the database. 
+        context.commit('UpdateNotes', {
+            projectId: state.projectId,
+            milestoneId: state.milestoneId
+        })
+    },
 
-	EditNote(context, note) {
-		context.commit('SetUpdatedNote', note);
-		context.commit('UpdateNoteDialog');
-	},
+    EditNote(context, note) {
+        context.commit('SetUpdatedNote', note);
+        context.commit('UpdateNoteDialog');
+    },
 
-	VisualizeNote(context, note) {
-		context.commit('SetOpenedNote', note);
-		context.commit('OpenNoteDialog');
-	},
+    VisualizeNote(context, note) {
+        context.commit('SetOpenedNote', note);
+        context.commit('OpenNoteDialog');
+    },
 
-	AddTask(context, task) {
-		context.commit('AddTask', {
-			projectId: context.getters.openedProjectId,
-			task: task
-		});
-	},
+    AddTask(context, task) {
+        context.commit('AddTask', {
+            projectId: context.getters.openedProjectId,
+            task: task
+        });
+    },
 
-	ToggleTask(context, task) {
-		context.commit('ToggleTask', {
-			projectId: context.getters.openedProjectId,
-			task: task
-		})
-	},
+    ToggleTask(context, task) {
+        context.commit('ToggleTask', {
+            projectId: context.getters.openedProjectId,
+            task: task
+        })
+    },
 
-	ToggleDisplayTasks(context) {
-		context.commit('ToggleDisplayTasks');
-	},
+    ToggleDisplayTasks(context) {
+        context.commit('ToggleDisplayTasks');
+    },
 
-	ReorderTasks(context, data) {
-		context.commit('ReorderTasks', data);
-	}
+    ReorderTasks(context, data) {
+        context.commit('ReorderTasks', data);
+    }
 }
 
 export default {
-	state,
-	getters,
-	mutations,
-	actions
+    state,
+    getters,
+    mutations,
+    actions
 }

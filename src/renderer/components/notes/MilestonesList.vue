@@ -18,11 +18,13 @@
 <script>
 import Utils from "../../../core/Utils";
 
+// 里程碑列表 
+// 在页面右边打开抽屉
 export default {
     name: "MilestonesList",
     data() {
         return {
-            milestoneName: ""
+            milestoneName: "" // 里程碑名，用于新建
         };
     },
     computed: {
@@ -35,6 +37,7 @@ export default {
             }
         },
 
+        // 获取选择的里程碑 id，设置选择的里程碑 id
         selected: {
             get() {
                 return this.$store.getters.currentMilestoneId;
@@ -46,21 +49,25 @@ export default {
                 });
             }
         },
+
+        // 当前项目下的所有里程碑
         milestones() {
             return this.$store.getters.milestones;
         }
     },
     methods: {
+        // 选择里程碑
         Select(index) {
             this.selected = index;
         },
 
+        // 弹出添加里程碑的表单
         AddMilestone() {
             const element = this.$refs.flash_input.$el;
             element.style.position = "fixed";
             element.style.visibility = "visible";
-
             element.style.top = "100px";
+
             Utils.FocusTextField(this.$refs.milestone_input.$el);
 
             Utils.ClickOutsideOrKeyPress(
@@ -79,6 +86,7 @@ export default {
             );
         },
 
+        // 隐藏新建里程碑表单
         Hide() {
             this.milestoneName = "";
             this.$refs.flash_input.$el.style.visibility = "hidden";

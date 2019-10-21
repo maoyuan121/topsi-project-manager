@@ -15,7 +15,10 @@ export default {
 	},
 	methods: {
 		Select(language) {
-			if (language == this.$store.getters.selectedLanguage) return;
+			if (language == this.$store.getters.selectedLanguage) {
+				return;
+			}
+			
 			this.$store.dispatch('SetCurrentLanguage', language);
 			this.$lang.SetCurrentLang(language);
 			location.reload();

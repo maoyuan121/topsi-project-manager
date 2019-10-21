@@ -22,6 +22,7 @@
 <script>
 import NoteTags from './NoteTags.vue'
 
+// 一个 note 
 export default {
 	name: 'Note',
 	components: {
@@ -31,15 +32,24 @@ export default {
 		note: Object
 	},
 	methods: {
+		/**
+		 * 更新 Note 
+		 */
 		Edit() {
 			this.$store.dispatch('EditNote', this.note);
 		},
 
+		/**
+		 * 打开 note 详细层
+		 */
 		Open() {
 			this.$store.dispatch('VisualizeNote', this.note);
 		}
 	},
 	computed: {
+		/**
+		 * 是否是暗黑模式
+		 */
 		dark() {
 			const darkMode = this.$store.state.AppStore.darkMode && this.note.color == '';
 			return (darkMode) ? true : (this.note.color.includes('white--text')) ? true : false;

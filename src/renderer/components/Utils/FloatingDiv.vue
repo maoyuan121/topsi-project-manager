@@ -67,11 +67,19 @@ export default {
 
 			drawer.style.position = 'fixed';
 			drawer.style.zIndex = 1;
-			if (this.width != null && this.width.length > 0) drawer.style.width = this.width + 'px';
-			if (this.height != null && this.height.length > 0) drawer.style.height = this.height + 'px';
+			if (this.width != null && this.width.length > 0) {
+				drawer.style.width = this.width + 'px';
+			}
+			if (this.height != null && this.height.length > 0) {
+				drawer.style.height = this.height + 'px';
+			}
 			drawer.style.borderRadius = '1%';
-			if (this.dark) drawer.className = 'elevation-15 secondary';
-			else drawer.className = 'elevation-15 white';
+			if (this.dark) {
+				drawer.className = 'elevation-15 secondary';
+			}
+			else {
+				drawer.className = 'elevation-15 white';
+			}
 
 			drawer.style.visibility = 'visible';
 

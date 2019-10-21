@@ -35,6 +35,7 @@ export default {
         container.style.position = "fixed";
         container.style.zIndex = 5;
 
+        // 设置 card 样式， fixed 水平居中，top 100
         card.style.position = "fixed";
         card.style.left = window.innerWidth / 2 - 250 + "px";
         window.addEventListener(

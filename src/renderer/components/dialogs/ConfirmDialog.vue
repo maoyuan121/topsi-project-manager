@@ -18,17 +18,22 @@
 export default {
 	name: 'ConfirmDialog',
 	props: {
-		title: String,
-		message: String,
-		acceptMsg: String,
-		cancelMsg: String,
-		acceptColor: String
+		title: String, // 标题
+		message: String, // 内容
+		acceptMsg: String, // 接受按钮的文本
+		cancelMsg: String, // 取消按钮的文本
+		acceptColor: String // 接受按钮的颜色
 	},
 	methods: {
+		/**
+		 * 取消
+		 * 触发父的 cancel 方法
+		 */
 		Cancel() {
 			this.$emit('cancel');
 		},
 
+		// 触发父的 accept 方法
 		Accept() {
 			this.$emit('accept');
 		}
