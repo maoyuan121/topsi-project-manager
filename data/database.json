@@ -41,5 +41,6 @@
   "default_databases_folder": "",
   "isMac": false,
   "display_tasks": true,
-  "lang": "en"
+  "lang": "en",
+  "darken_toolbar": false
 }
