@@ -13,40 +13,40 @@
 export default {
     name: "Dialog",
     props: {
-        width: String,
-        height: String,
-        cancelText: String,
-        acceptText: String,
-        disableAccept: Boolean,
-        disableCancel: Boolean,
-        acceptColor: String,
-        cancelColor: String,
-        acceptRaised: Boolean,
-        cancelRaised: Boolean
+        width: String, // 宽度
+        height: String, // 高度
+        cancelText: String, // 取消按钮的文本
+        acceptText: String, // 确定按钮的文本
+        disableAccept: Boolean, // 是否隐藏确定按钮
+        disableCancel: Boolean, // 是否隐藏取消按钮
+        acceptColor: String, //  确定按钮的颜色
+        cancelColor: String, // 取消按钮的颜色
+        acceptRaised: Boolean, // 确定按钮是否突出
+        cancelRaised: Boolean // 取消按钮是否突出
     },
     data() {
         return {
-            /// Height of the tilebar
+            // 标题栏的高度
             top: 30
         };
     },
     methods: {
         /**
-         * When the users clicks on the Close button
+         * 点击关闭按钮触发
          */
         Close(event) {
             this.RollUp(() => this.$emit("close", event));
         },
 
         /**
-         * When the user clicks on the accept button.
+         * 点击接受按钮触发
          */
         Accept(event) {
             this.RollUp(() => this.$emit("accept", event));
         },
 
         /**
-         * Roll-up the dialog, but does not close it.
+         * 像上卷起对话框，但是不要关闭
          */
         RollUp(callback) {
             const element = document.getElementById("project-dialog");
@@ -55,16 +55,18 @@ export default {
 			element.classList.remove('dialog--reveal__animation');
 			element.classList.add('dialog--hide__animation');
 
-			// Callback 10ms before the end of the animation to avoid flickering
+			// 在动画结束后执行 callback，避免闪烁
 			setTimeout(callback, 190);
         }
     },
     computed: {
+        // 颜色演示
         color() {
             return !this.$store.getters.isDarkMode ? "grey lighten-2" : "";
         }
     },
     mounted() {
+        // dialog 最高占页面的九成
         const maxHeightRatio = 0.9;
         const actionsOffset = 0;
         const element = document.getElementById("project-dialog");
@@ -81,9 +83,12 @@ export default {
         element.style.width = width + "px";
         element.style.zIndex = 1;
 
-        if (height >= maxHeight)
+        if (height >= maxHeight) {
             this.$refs.card_actions.style.position = "relative";
-        else this.$refs.card_actions.style.position = "absolute";
+        }
+        else {
+            this.$refs.card_actions.style.position = "absolute";
+        }
 
         if (minHeight < window.innerHeight)
             element.style.minHeight = minHeight + "px";
@@ -98,7 +103,9 @@ export default {
 		element.classList.add('dialog--reveal__animation');
 
         // Adjust the top if it's mac
-        if (this.$store.getters.isMac) this.top = 0;
+        if (this.$store.getters.isMac) {
+            this.top = 0;
+        }
     }
 };
 </script>

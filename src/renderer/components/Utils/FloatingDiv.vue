@@ -12,10 +12,10 @@ import Utils from '../../../core/Utils';
 export default {
 	name: 'FloatingDiv',
 	props: {
-		activatorId: String,
-		width: String,
-		height: String,
-		dark: Boolean,
+		activatorId: String, // 点击哪个按钮显示该浮层
+		width: String, // 浮层的宽度
+		height: String, // 浮层的高度
+		dark: Boolean, // 是否是暗黑模式
 		indicatorColor: String,
 		left: Boolean,
 		top: Boolean,
@@ -33,8 +33,11 @@ export default {
 		drawer.style.position = 'fixed';
 		drawer.style.opacity = '0';
 		drawer.style.visibility = 'collapse';
+
 		button.onclick = () => {
-			if (document.getElementById("floating-triangle-id")) return;
+			if (document.getElementById("floating-triangle-id")) {
+				return;
+			}
 
 			const triangle = document.createElement('div');
 			const rect = button.getBoundingClientRect();

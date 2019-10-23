@@ -11,8 +11,8 @@
 export default {
 	name: 'ColorPicker',
 	props: {
-		padding: String,
-		width: String,
+		padding: String, // 按钮组的 padding
+		width: String, // 按钮组的宽度
 		value: String
 	},
 	data() {
@@ -43,21 +43,21 @@ export default {
 	},
 	methods: {
 		/**
-		 * Iterate trough all the buttons, and apply visual changes to the selected button.
-		 * Emits an event with the selected color.
+		 * 迭代所有按钮，修改选中按钮的样式
+		 * 发射事件
 		 */
 		Select(color, index) {
 			this.selected = color;
 			const btns = document.getElementsByClassName('color-picker-btn')
 			for (let i = 0; i < btns.length; i++) {
-				// Default values for each buttons
+				// 按钮的默认样式值
 				let height = 10;
 				let top = 0;
 
 
 				const el = btns.item(i);
 
-				// Change the default values for the selected button
+				// 选中按钮的样式值
 				if (index == i) {
 					height = 14;
 					top = -2;
@@ -76,10 +76,12 @@ export default {
 		}
 	},
 	mounted() {
-		// Width is required.
-		if (!this.width) throw new Error("Width is required for the TimePicker component");
+		// 宽度必填
+		if (!this.width) {
+			throw new Error("Width is required for the TimePicker component");
+		}
 
-		// Get the buttons, where each button represents a color.
+		// 获取所有按钮
 		const btns = document.getElementsByClassName('color-picker-btn');
 
 		// Calculate the padding and width.
